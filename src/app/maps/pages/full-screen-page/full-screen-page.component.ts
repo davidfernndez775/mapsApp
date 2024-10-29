@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Map } from 'maplibre-gl';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'maps-full',
@@ -27,7 +28,7 @@ export class FullScreenPageComponent implements AfterViewInit {
 
       this.map = new Map({
         container: this.mapContainer.nativeElement,
-        style: `https://api.maptiler.com/maps/streets-v2/style.json?key=Bkz34KRGJw7tELwmleyL`,
+        style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${environment.maplibre_key}`,
         center: [initialState.lng, initialState.lat],
         zoom: initialState.zoom,
       });

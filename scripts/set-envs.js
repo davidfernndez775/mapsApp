@@ -11,7 +11,7 @@ const targetPath = "./src/environments/environment.ts";
 // environment.ts
 const envFileContent = `
 export const environment = {
-  mapbox_key:"${process.env["MAPBOX_KEY"]}"
+  maplibre_key:"${process.env["MAPLIBRE_KEY"]}"
 };
 `;
 
