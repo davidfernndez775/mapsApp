@@ -18,13 +18,16 @@ import { environment } from '../../../../environments/environment';
 export class FullScreenPageComponent implements AfterViewInit {
   map: Map | undefined;
   @ViewChild('map')
-  private mapContainer!: ElementRef<HTMLElement>;
+  private mapContainer?: ElementRef<HTMLElement>;
 
   constructor(@Inject(PLATFORM_ID) private platformId: any) {}
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       const initialState = { lng: 139.753, lat: 35.6844, zoom: 14 };
+
+      // chequeamos que el elemento map exista
+      if (!this.mapContainer) throw 'HTML Element not found';
 
       this.map = new Map({
         container: this.mapContainer.nativeElement,
