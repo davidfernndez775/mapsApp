@@ -7,7 +7,7 @@ import {
   PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
-import { LngLat, Map } from 'maplibre-gl';
+import { LngLat, Map, Marker } from 'maplibre-gl';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -17,7 +17,8 @@ import { environment } from '../../../../environments/environment';
 })
 export class MarkersPageComponent implements AfterViewInit {
   // valores de los parametros del mapa
-  public state = { lng: 139.753, lat: 35.6844, zoom: 14 };
+  public currentLngLat: LngLat = new LngLat(139.753, 35.6844);
+  public zoom: number = 14;
   // inicializamos el mapa
   public map: Map | undefined;
   @ViewChild('map')
@@ -33,8 +34,8 @@ export class MarkersPageComponent implements AfterViewInit {
       this.map = new Map({
         container: this.mapContainer.nativeElement,
         style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${environment.maplibre_key}`,
-        center: [this.state.lng, this.state.lat],
-        zoom: this.state.zoom,
+        center: this.currentLngLat,
+        zoom: this.zoom,
       });
 
       this.mapListeners();
@@ -48,7 +49,7 @@ export class MarkersPageComponent implements AfterViewInit {
 
     // obtenemos el valor del zoom de maplibre
     this.map.on('zoom', (ev) => {
-      this.state.zoom = this.map!.getZoom();
+      this.zoom = this.map!.getZoom();
     });
 
     // llegamos al maximo valor del zoom
@@ -61,9 +62,8 @@ export class MarkersPageComponent implements AfterViewInit {
 
     // cambio de la posicion en long lat
     this.map.on('move', () => {
-      const { lng, lat } = this.map!.getCenter();
-      this.state.lng = lng;
-      this.state.lat = lat;
+      this.currentLngLat = this.map!.getCenter();
+      const { lng, lat } = this.currentLngLat;
     });
   }
 
@@ -77,9 +77,12 @@ export class MarkersPageComponent implements AfterViewInit {
   }
 
   zoomChanged(value: string) {
-    this.state.zoom = Number(value);
-    this.map?.zoomTo(this.state.zoom);
+    this.zoom = Number(value);
+    this.map?.zoomTo(this.zoom);
   }
+
+  // // marcador
+  // const marker = new Marker().setLngLat(this.currentLngLat).addTo(this.map);
 
   // destruir el componente con sus listeners
   ngOnDestroy() {
