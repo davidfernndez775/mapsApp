@@ -7,7 +7,7 @@ import {
   PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
-import { Map } from 'maplibre-gl';
+import { LngLat, Map } from 'maplibre-gl';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -18,6 +18,8 @@ import { environment } from '../../../../environments/environment';
 export class ZoomRangePageComponent implements AfterViewInit {
   // valores de los parametros del mapa
   public state = { lng: 139.753, lat: 35.6844, zoom: 14 };
+  // coordenadas del mapa
+  public lngLat: LngLat = new LngLat(-74.5, 40);
   // inicializamos el mapa
   public map: Map | undefined;
   @ViewChild('map')
@@ -59,13 +61,12 @@ export class ZoomRangePageComponent implements AfterViewInit {
       this.map!.zoomTo(18);
     });
 
-    // // llegamos al minimo valor del zoom
-    // this.map.on('zoomstart', (ev) => {
-    //   // si es mayor de -2 no se ejecuta
-    //   if (this.map!.getZoom() > -1) return;
-    //   // si es menor lo devuelve a -2
-    //   this.map!.zoomTo(-1);
-    // });
+    // cambio de la posicion en long lat
+    this.map.on('move', () => {
+      const { lng, lat } = this.map!.getCenter();
+      this.state.lng = lng;
+      this.state.lat = lat;
+    });
   }
 
   // botones de zoom
@@ -82,7 +83,7 @@ export class ZoomRangePageComponent implements AfterViewInit {
     this.map?.zoomTo(this.state.zoom);
   }
 
-  // destruir el componente
+  // destruir el componente con sus listeners
   ngOnDestroy() {
     this.map?.remove();
   }
