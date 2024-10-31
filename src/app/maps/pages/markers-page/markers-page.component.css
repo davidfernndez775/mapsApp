@@ -19,3 +19,16 @@
   display: flex;
   align-items: center;
 }
+
+#new-marker {
+  position: fixed;
+  bottom: 40px;
+  right: 20px;
+}
+
+.list-group {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+}

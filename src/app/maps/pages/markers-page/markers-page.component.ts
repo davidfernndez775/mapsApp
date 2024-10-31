@@ -31,6 +31,7 @@ export class MarkersPageComponent implements AfterViewInit {
       // chequeamos que el elemento map exista
       if (!this.mapContainer) throw 'HTML Element not found';
 
+      // creamos el mapa
       this.map = new Map({
         container: this.mapContainer.nativeElement,
         style: `https://api.maptiler.com/maps/streets-v2/style.json?key=${environment.maplibre_key}`,
@@ -38,11 +39,18 @@ export class MarkersPageComponent implements AfterViewInit {
         zoom: this.zoom,
       });
 
+      // marcadores
+
+      const marker = new Marker({ color: 'green' })
+        .setLngLat(this.currentLngLat)
+        .addTo(this.map);
+
+      // invocamos los listeners
       this.mapListeners();
     }
   }
 
-  // listener para obtener el zoom
+  // *LISTENERS
   mapListeners() {
     // chequeamos que el mapa se haya cargado
     if (!this.map) throw 'Not initialized map';
@@ -67,6 +75,7 @@ export class MarkersPageComponent implements AfterViewInit {
     });
   }
 
+  // *BOTONES
   // botones de zoom
   zoomIn() {
     this.map?.zoomIn();
@@ -80,9 +89,6 @@ export class MarkersPageComponent implements AfterViewInit {
     this.zoom = Number(value);
     this.map?.zoomTo(this.zoom);
   }
-
-  // // marcador
-  // const marker = new Marker().setLngLat(this.currentLngLat).addTo(this.map);
 
   // destruir el componente con sus listeners
   ngOnDestroy() {
