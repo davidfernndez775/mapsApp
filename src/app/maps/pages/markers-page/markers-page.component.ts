@@ -10,6 +10,17 @@ import {
 import { LngLat, Map, Marker } from 'maplibre-gl';
 import { environment } from '../../../../environments/environment';
 
+// interfaz para definir un marcador con su color
+interface MarkerAndColor {
+  color: string;
+  marker: Marker;
+}
+
+interface PlainMarker {
+  color: string;
+  lngLat: number[];
+}
+
 @Component({
   selector: 'maps-markers',
   templateUrl: './markers-page.component.html',
@@ -23,6 +34,9 @@ export class MarkersPageComponent implements AfterViewInit {
   public map: Map | undefined;
   @ViewChild('map')
   private mapContainer?: ElementRef<HTMLElement>;
+
+  // marcadores
+  public markers: MarkerAndColor[] = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: any) {}
 
@@ -38,6 +52,8 @@ export class MarkersPageComponent implements AfterViewInit {
         center: this.currentLngLat,
         zoom: this.zoom,
       });
+
+      this.readFromLocalStorage();
 
       // invocamos los listeners
       this.mapListeners();
@@ -107,6 +123,55 @@ export class MarkersPageComponent implements AfterViewInit {
     const marker = new Marker({ color: color, draggable: true })
       .setLngLat(lngLat)
       .addTo(this.map);
+
+    // guardamos el marcador
+    this.markers.push({ color: color, marker: marker });
+    this.saveToLocalStorage();
+  }
+
+  // eliminamos el marcador
+  deleteMarker(index: number) {
+    // lo eliminamos del mapa
+    this.markers[index].marker.remove();
+    // lo eliminamos del arreglo
+    this.markers.splice(index, 1);
+  }
+
+  // centramos el mapa en el marcador seleccionado
+  flyTo(marker: Marker) {
+    this.map?.flyTo({
+      zoom: 14,
+      center: marker.getLngLat(),
+    });
+  }
+
+  // guardamos el marcador en el almacenamiento local
+  saveToLocalStorage() {
+    // definimos lo que vamos a guardar en el localStorage
+    const plainMarkers: PlainMarker[] = this.markers.map(
+      ({ color, marker }) => {
+        return {
+          color,
+          lngLat: marker.getLngLat().toArray(),
+        };
+      }
+    );
+    // guardamos en el localStorage
+    localStorage.setItem('plainMarkers', JSON.stringify(plainMarkers));
+  }
+
+  // cargamos los datos desde el almacenamiento local
+  readFromLocalStorage() {
+    // leemos los marcadores desde el localStorage, sino hay nada devuelve un array vacio
+    const plainMarkersString = localStorage.getItem('plainMarkers') ?? '[]';
+    const plainMarkers: PlainMarker[] = JSON.parse(plainMarkersString);
+
+    // creamos el marcador
+    plainMarkers.forEach(({ color, lngLat }) => {
+      const [lng, lat] = lngLat;
+      const coords = new LngLat(lng, lat);
+      this.addMarker(coords, color);
+    });
   }
 
   // destruir el componente con sus listeners
