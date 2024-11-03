@@ -39,12 +39,6 @@ export class MarkersPageComponent implements AfterViewInit {
         zoom: this.zoom,
       });
 
-      // marcadores
-
-      const marker = new Marker({ color: 'green' })
-        .setLngLat(this.currentLngLat)
-        .addTo(this.map);
-
       // invocamos los listeners
       this.mapListeners();
     }
@@ -75,7 +69,7 @@ export class MarkersPageComponent implements AfterViewInit {
     });
   }
 
-  // *BOTONES
+  // *FUNCIONES DE BOTONES PARA ZOOM
   // botones de zoom
   zoomIn() {
     this.map?.zoomIn();
@@ -88,6 +82,31 @@ export class MarkersPageComponent implements AfterViewInit {
   zoomChanged(value: string) {
     this.zoom = Number(value);
     this.map?.zoomTo(this.zoom);
+  }
+
+  // *FUNCIONES DE BOTONES PARA MARCADORES
+  createMarker() {
+    // chequeamos que el mapa exista
+    if (!this.map) return;
+
+    // definimos el color para que cambie de un marcador a otro
+    const color = '#xxxxxx'.replace(/x/g, (y) =>
+      ((Math.random() * 16) | 0).toString(16)
+    );
+    // obtenemos la posicion
+    const lngLat = this.map.getCenter();
+
+    // invocamos la funcion
+    this.addMarker(lngLat, color);
+  }
+
+  addMarker(lngLat: LngLat, color: string = 'red') {
+    if (!this.map) return;
+
+    // se especifica el color y si el marcador se puede mover(draggable)
+    const marker = new Marker({ color: color, draggable: true })
+      .setLngLat(lngLat)
+      .addTo(this.map);
   }
 
   // destruir el componente con sus listeners
