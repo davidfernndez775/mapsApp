@@ -127,6 +127,12 @@ export class MarkersPageComponent implements AfterViewInit {
     // guardamos el marcador
     this.markers.push({ color: color, marker: marker });
     this.saveToLocalStorage();
+
+    // guardar los cambios en la posicion de un marcador
+    // usamos un listener
+    marker.on('dragend', () => {
+      this.saveToLocalStorage();
+    });
   }
 
   // eliminamos el marcador
