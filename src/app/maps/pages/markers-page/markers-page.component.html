@@ -4,7 +4,7 @@
   <li
     *ngFor="let colorMarker of markers; let i = index"
     [ngStyle]="{ backgroundColor: colorMarker.color }"
-    (dblClick)="deleteMarker(i)"
+    (dblclick)="deleteMarker(i)"
     (click)="flyTo(colorMarker.marker)"
     class="list-group-item"
   >
